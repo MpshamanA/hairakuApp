@@ -45,11 +45,11 @@ class _UserCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                subtitle: Text(
-                  customer.companyName,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white70),
-                ),
+                // subtitle: Text(
+                //   customer.companyName,
+                //   textAlign: TextAlign.center,
+                //   style: const TextStyle(color: Colors.white70),
+                // ),
               ),
             ),
           ),

@@ -35,8 +35,7 @@ class _AccountSettingState extends ConsumerState<AccountSetting> {
           final userState = ref.watch(userProvider.notifier);
           await FirebaseAuth.instance.signOut().then((_) {
             //ユーザー情報をプロバイダーに登録
-            userState.state =
-                Customer(uid: '', name: '', companyName: '', emailAddress: '');
+            userState.state = Customer(uid: '', name: '', emailAddress: '');
             //     //ログイン情報を更新
             userState.state.isSignin = false;
 

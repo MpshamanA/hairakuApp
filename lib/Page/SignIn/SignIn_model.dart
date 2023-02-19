@@ -22,7 +22,7 @@ class SignInModel {
       userState.state = Customer(
           uid: uid,
           name: docSnapshot['name'],
-          companyName: docSnapshot['companyName'],
+          // companyName: docSnapshot['companyName'],
           emailAddress: docSnapshot['emailAdress']);
       //ログイン情報を更新
       userState.state.isSignin = true;

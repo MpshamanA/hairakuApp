@@ -21,7 +21,7 @@ class _Qrcode extends StatelessWidget {
         margin: const EdgeInsets.all(30),
         alignment: Alignment.topCenter,
         child: QrImage(
-          data: '${customer.name},${customer.companyName}',
+          data: '${customer.name}',
           version: QrVersions.auto,
           size: 150.0, //QRコードのサイズ
         ),

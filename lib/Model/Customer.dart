@@ -1,7 +1,7 @@
 class Customer {
   String uid;
   String name;
-  String companyName;
+  // String companyName;
   String emailAddress;
   //ログイン状態を管理
   bool isSignin = false;
@@ -11,6 +11,6 @@ class Customer {
   Customer(
       {required this.uid,
       required this.name,
-      required this.companyName,
+      // required this.companyName,
       required this.emailAddress});
 }

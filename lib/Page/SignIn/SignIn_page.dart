@@ -47,15 +47,6 @@ class _SignInState extends ConsumerState<SignIn> {
     final double deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: false,
-      //   centerTitle: true,
-      //   title: const Text(''),
-      //   backgroundColor: ConstColors.appbarColor,
-      //   foregroundColor: ConstColors.mainColor,
-      //   //影
-      //   elevation: (0.0),
-      // ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -75,8 +66,11 @@ class _SignInState extends ConsumerState<SignIn> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextFormField(
-                      decoration: const InputDecoration(
-                          label: Text('メールアドレス'), border: OutlineInputBorder()),
+                      decoration: InputDecoration(
+                        label: Text('メールアドレス'),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
                       //バリデーション
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
@@ -89,8 +83,10 @@ class _SignInState extends ConsumerState<SignIn> {
                             emailAddress = value;
                           })),
                   TextFormField(
-                    decoration: const InputDecoration(
-                        label: Text('パスワード'), border: OutlineInputBorder()),
+                    decoration: InputDecoration(
+                        label: Text('パスワード'),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15))),
                     obscureText: true,
                     maxLength: 20,
                     //バリデーション

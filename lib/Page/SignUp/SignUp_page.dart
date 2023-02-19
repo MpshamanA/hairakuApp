@@ -29,7 +29,7 @@ class SignUp extends ConsumerStatefulWidget {
 
 class _SignUpState extends ConsumerState<SignUp> {
   String _name = '';
-  String _companyName = '';
+  // String _companyName = '';
   String _emailAdress = '';
   String _password = '';
 
@@ -65,7 +65,7 @@ class _SignUpState extends ConsumerState<SignUp> {
     users.set({
       'emailAdress': _emailAdress,
       'name': _name,
-      'companyName': _companyName
+      // 'companyName': _companyName
     }).then((_) {
       print('データの登録に成功');
       //新規登録したユーザー情報をグローバルで管理する
@@ -73,7 +73,7 @@ class _SignUpState extends ConsumerState<SignUp> {
       userState.state = Customer(
           uid: uid,
           name: _name,
-          companyName: _companyName,
+          // companyName: _companyName,
           emailAddress: _emailAdress);
       //ログイン状態を更新する
       userState.state.isSignin = true;
@@ -88,70 +88,101 @@ class _SignUpState extends ConsumerState<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    //画面の横幅を取得
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    //画面の縦幅を取得
+    final double deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('アカウント作成'),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           //Columnはデフォルトでは画面全体に広がるのでそのままではセンターに表示されない
-          // mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextFormField(
-              decoration: InputDecoration(label: Text('名前')),
-              onChanged: (value) {
-                setState(() {
-                  _name = value;
-                });
-              },
+            Padding(
+              padding: const EdgeInsets.only(bottom: 26),
+              child: Image.asset(
+                'assets/images/flutter-logo.png',
+                width: deviceWidth * 0.2,
+                fit: BoxFit.fill,
+              ),
             ),
-            TextFormField(
-              decoration: InputDecoration(label: Text('会社名')),
-              onChanged: (value) {
-                setState(() {
-                  _companyName = value;
-                });
-              },
-            ),
-            TextFormField(
-              decoration: InputDecoration(label: Text('メールアドレス')),
-              // keyboardType: TextInputType.emailAddress,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == '' || !EmailValidator.validate(value!)) {
-                  return 'メールアドレスが不正です';
-                }
-                return null;
-              },
-              onChanged: (value) {
-                setState(() {
-                  _emailAdress = value;
-                });
-              },
-            ),
-            TextFormField(
-              decoration: InputDecoration(label: Text('パスワード')),
-              obscureText: true,
-              maxLength: 20,
-              //バリデーション
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value!.length < 6) {
-                  return '6〜20桁でパスワードを作成してください。';
-                }
-                return null;
-              },
-              onChanged: (value) {
-                setState(() {
-                  _password = value;
-                });
-              },
+            SizedBox(
+              height: deviceHeight * 0.4,
+              width: deviceWidth * 0.8,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(
+                      label: Text('名前'),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _name = value;
+                      });
+                    },
+                  ),
+                  // TextFormField(
+                  //   decoration: InputDecoration(
+                  //       label: Text('会社名'), border: OutlineInputBorder()),
+                  //   onChanged: (value) {
+                  //     setState(() {
+                  //       _companyName = value;
+                  //     });
+                  //   },
+                  // ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      label: Text('メールアドレス'),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                    ),
+                    // keyboardType: TextInputType.emailAddress,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == '' || !EmailValidator.validate(value!)) {
+                        return 'メールアドレスが不正です';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        _emailAdress = value;
+                      });
+                    },
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      label: Text('パスワード'),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    obscureText: true,
+                    maxLength: 20,
+                    //バリデーション
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value!.length < 6) {
+                        return '6〜20桁でパスワードを作成してください。';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        _password = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
             ElevatedButton(
               child: Text('登録'),
               onPressed: _name == '' ||
-                      _companyName == '' ||
                       !EmailValidator.validate(_emailAdress) ||
                       _password.length < 6
                   ? null

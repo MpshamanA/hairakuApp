@@ -41,69 +41,104 @@ class _SignInState extends ConsumerState<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    //画面の横幅を取得
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    //画面の縦幅を取得
+    final double deviceHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: const Text('ログイン'),
-        backgroundColor: ConstColors.appbarColor,
-        foregroundColor: ConstColors.mainColor,
-        //影
-        elevation: (0.0),
-      ),
-      body: Column(
-        children: [
-          TextFormField(
-              decoration: const InputDecoration(label: Text('メールアドレス')),
-              //バリデーション
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == '' || !EmailValidator.validate(value!)) {
-                  return 'メールアドレスが不正です';
-                }
-                return null;
-              },
-              onChanged: (value) => setState(() {
-                    emailAddress = value;
-                  })),
-          TextFormField(
-            decoration: const InputDecoration(label: Text('パスワード')),
-            obscureText: true,
-            maxLength: 20,
-            //バリデーション
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            validator: (value) {
-              if (value!.length < 6) {
-                return '6〜20桁でパスワードを作成してください。';
-              }
-              return null;
-            },
-            onChanged: (value) => setState(() {
-              password = value;
-            }),
-          ),
-          ElevatedButton(
-              onPressed:
-                  !EmailValidator.validate(emailAddress) || password.length < 6
-                      ? null
-                      : callSignInToFirebase,
-              child: const Text('ログイン')),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('アカウントをお持ちでない方は'),
-              TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        CustomMaterialPageRoute(
-                            builder: (context) => const SignUp()));
-                  },
-                  child: const Text('こちら'))
-            ],
-          )
-        ],
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   centerTitle: true,
+      //   title: const Text(''),
+      //   backgroundColor: ConstColors.appbarColor,
+      //   foregroundColor: ConstColors.mainColor,
+      //   //影
+      //   elevation: (0.0),
+      // ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 26),
+              child: Image.asset(
+                'assets/images/flutter-logo.png',
+                width: deviceWidth * 0.2,
+                fit: BoxFit.fill,
+              ),
+            ),
+            SizedBox(
+              height: deviceHeight * 0.33,
+              width: deviceWidth * 0.8,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextFormField(
+                      decoration: const InputDecoration(
+                          label: Text('メールアドレス'), border: OutlineInputBorder()),
+                      //バリデーション
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == '' || !EmailValidator.validate(value!)) {
+                          return 'メールアドレスが不正です';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) => setState(() {
+                            emailAddress = value;
+                          })),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                        label: Text('パスワード'), border: OutlineInputBorder()),
+                    obscureText: true,
+                    maxLength: 20,
+                    //バリデーション
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value!.length < 6) {
+                        return '6〜20桁でパスワードを作成してください。';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) => setState(() {
+                      password = value;
+                    }),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 0),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      onPressed: !EmailValidator.validate(emailAddress) ||
+                              password.length < 6
+                          ? null
+                          : callSignInToFirebase,
+                      child: const Text('ログイン')),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('アカウントをお持ちでない方は'),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                CustomMaterialPageRoute(
+                                    builder: (context) => const SignUp()));
+                          },
+                          child: const Text('こちら'))
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

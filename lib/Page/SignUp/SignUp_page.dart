@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:user_manage_qrcode/Page/SignIn/SignIn_page.dart';
+import 'package:user_manage_qrcode/Page/SignUp/SignUp_model.dart';
 import 'package:user_manage_qrcode/app.dart';
 
 import '../../Custom/CustomMaterialPageRoute.dart';
@@ -33,57 +34,10 @@ class _SignUpState extends ConsumerState<SignUp> {
   String _emailAdress = '';
   String _password = '';
 
-  Future<void> signUpToFirebase() async {
-    await Firebase.initializeApp();
+  SignUpModel model = SignUpModel();
 
-    //firebase: email password認証
-    try {
-      final UserCredential credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailAdress,
-        password: _password,
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-        return;
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-        return;
-      }
-    } catch (e) {
-      print('ユーザーの作成に失敗しました。: $e');
-      return;
-    }
-
-    //uid取得
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    final String uid = auth.currentUser!.uid.toString();
-    //usersコレクションに新規登録したユーザーのuidでデータを登録する
-    DocumentReference<Map<String, dynamic>> users =
-        FirebaseFirestore.instance.collection('users').doc(uid);
-    users.set({
-      'emailAdress': _emailAdress,
-      'name': _name,
-      // 'companyName': _companyName
-    }).then((_) {
-      print('データの登録に成功');
-      //新規登録したユーザー情報をグローバルで管理する
-      final userState = ref.watch(userProvider.notifier);
-      userState.state = Customer(
-          uid: uid,
-          name: _name,
-          // companyName: _companyName,
-          emailAddress: _emailAdress);
-      //ログイン状態を更新する
-      userState.state.isSignin = true;
-      //ユーザーの登録に成功したら画面遷移
-      Navigator.push(
-          context, CustomMaterialPageRoute(builder: (context) => const App()));
-    }).catchError((e) {
-      print('fireStoreへのデータの登録で失敗しました。: $e');
-      return;
-    });
+  void callSignInToFirebase() {
+    model.signUpToFirebase(_name, _emailAdress, _password, ref, context);
   }
 
   @override
@@ -186,7 +140,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                       !EmailValidator.validate(_emailAdress) ||
                       _password.length < 6
                   ? null
-                  : signUpToFirebase,
+                  : callSignInToFirebase,
             ),
             Row(
               mainAxisSize: MainAxisSize.min,

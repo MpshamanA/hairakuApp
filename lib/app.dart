@@ -50,10 +50,10 @@ class _AppState extends ConsumerState<App> {
                   icon: Icon(Icons.qr_code_outlined),
                   label: 'スキャン入場',
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.qr_code_outlined),
-                  label: 'QRコードテスト',
-                ),
+                // BottomNavigationBarItem(
+                //   icon: Icon(Icons.qr_code_outlined),
+                //   label: 'QRコードテスト',
+                // ),
               ],
               currentIndex: _selectIndex,
               onTap: _onTapItem,

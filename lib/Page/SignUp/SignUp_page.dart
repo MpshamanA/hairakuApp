@@ -1,16 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:user_manage_qrcode/Page/SignIn/SignIn_page.dart';
 import 'package:user_manage_qrcode/Page/SignUp/SignUp_model.dart';
-import 'package:user_manage_qrcode/app.dart';
-
-import '../../Custom/CustomMaterialPageRoute.dart';
-import '../../Model/Customer.dart';
-import '../../Providers/userInfo_provider.dart';
 
 class SignUpWidget extends StatelessWidget {
   const SignUpWidget({super.key});

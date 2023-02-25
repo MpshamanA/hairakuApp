@@ -2,31 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:user_manage_qrcode/Page/AccountSetting/AccountSetting_page.dart';
 
-import '../../Component/AlertBuilderForCupertino.dart';
+// import '../../Component/AlertBuilderForCupertino.dart';
 import '../../Const//ConstColors.dart';
 import '../../Custom/CustomMaterialPageRoute.dart';
 import '../../Model/Customer.dart';
 import '../../Providers/userInfo_provider.dart';
-import '../../Providers/userManage_provider.dart';
+// import '../../Providers/userManage_provider.dart';
 
 class _UserCard extends StatelessWidget {
-  _UserCard({
-    Key? key,
-    required this.mainColor,
-    required this.customer,
-  }) : super(key: key);
+  _UserCard(
+      {Key? key,
+      required this.mainColor,
+      required this.customer,
+      required this.deviceSize})
+      : super(key: key);
 
   final Customer customer;
   final Color mainColor;
+  final Size deviceSize;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
-        height: 230,
+        height: deviceSize.height * 0.28,
+        width: deviceSize.width * 0.9,
         child: Card(
-          color: mainColor.withOpacity(0.8), // Card自体の色
-          margin: const EdgeInsets.all(20),
+          color: mainColor, // Card自体の色
           elevation: 8, // 影の離れ具合
           shadowColor: Colors.black, // 影の色
           shape: RoundedRectangleBorder(
@@ -40,7 +42,7 @@ class _UserCard extends StatelessWidget {
                   customer.name,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.white70,
+                    color: Colors.white,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -66,36 +68,29 @@ class Home extends ConsumerStatefulWidget {
 }
 
 class _HomeState extends ConsumerState<Home> {
+  //FireBaseからmeetings情報をとってくる
   List<Map<String, dynamic>> meetings = [
-    {'id': 1, '会議名': '会議１', '開催日時': DateTime.now()},
-    {'id': 2, '会議名': '会議２', '開催日時': DateTime.now()},
-    {'id': 3, '会議名': '会議３', '開催日時': DateTime.now()},
-    {'id': 4, '会議名': '会議４', '開催日時': DateTime.now()},
-    {'id': 5, '会議名': '会議５', '開催日時': DateTime.now()},
-    {'id': 6, '会議名': '会議６', '開催日時': DateTime.now()},
-    {'id': 7, '会議名': '会議７', '開催日時': DateTime.now()},
-    {'id': 8, '会議名': '会議８', '開催日時': DateTime.now()},
-    {'id': 9, '会議名': '会議９', '開催日時': DateTime.now()},
-    {'id': 10, '会議名': '会議１０', '開催日時': DateTime.now()},
-    {'id': 11, '会議名': '会議１１', '開催日時': DateTime.now()},
-    {'id': 12, '会議名': '会議１２', '開催日時': DateTime.now()},
-    {'id': 13, '会議名': '会議１３', '開催日時': DateTime.now()},
-    {'id': 14, '会議名': '会議１４', '開催日時': DateTime.now()},
-    {'id': 15, '会議名': '会議１５', '開催日時': DateTime.now()},
-    {'id': 16, '会議名': '会議１６', '開催日時': DateTime.now()},
+    {'id': 1, '会議名': '会議１', '開催者': '開催者１', '開催日': '23-5-24'},
+    {'id': 2, '会議名': '会議２', '開催者': '開催者２', '開催日': '23-5-24'},
+    {'id': 3, '会議名': '会議３', '開催者': '開催者３', '開催日': '23-5-24'},
+    {'id': 4, '会議名': '会議４', '開催者': '開催者４', '開催日': '23-5-24'},
+    {'id': 5, '会議名': '会議５', '開催者': '開催者５', '開催日': '23-5-24'},
+    {'id': 6, '会議名': '会議６', '開催者': '開催者６', '開催日': '23-5-24'},
   ];
 
   @override
   Widget build(BuildContext context) {
+    final Size deviceSize = MediaQuery.of(context).size;
     //画面の横幅を取得
-    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double deviceWidth = deviceSize.width;
     //画面の縦幅を取得
-    final double deviceHeight = MediaQuery.of(context).size.height;
+    final double deviceHeight = deviceSize.height;
     return Scaffold(
       backgroundColor: ConstColors.bodyColor,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.account_circle),
+          iconSize: 30,
           color: ConstColors.mainColor,
           onPressed: () {
             //appbarのaccount_circleアイコンをタップしたときの処理
@@ -113,86 +108,143 @@ class _HomeState extends ConsumerState<Home> {
         elevation: (0.0),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _UserCard(
             mainColor: ConstColors.mainColor,
             customer: ref.watch(userProvider),
+            deviceSize: deviceSize,
           ),
           Text(
-            '入場中のミーティング',
+            '参加した最新の集まり',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          //参加してる
           ref.watch(userProvider).isAdmission
-              ? Text('入場中だよ')
+              ?
+              //データをとる時に最初の会議は削除する
+              MeetingCardWidget(
+                  deviceWidth: deviceWidth,
+                  meetingName: meetings[0]['会議名'],
+                  startDate: meetings[0]['開催日'],
+                  organizer: meetings[0]['開催者'])
+
               // : Text('入場ミーティングは無し')
-              : Text('hoge'),
+              // : Text('現在参加していません'),
+              : MeetingCardWidget(
+                  deviceWidth: deviceWidth,
+                  meetingName: meetings[0]['会議名'],
+                  startDate: meetings[0]['開催日'],
+                  organizer: meetings[0]['開催者']),
           //入場中の会議
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 50,
-                width: deviceWidth * 0.8,
-                // color: Colors.blueAccent,
-                decoration: BoxDecoration(
-                  // 枠線
-                  // border: Border.all(color: Colors.blue, width: 2),
-                  // 角丸
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+          Text(
+            "参加した過去の集まり",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          //ここで過去の会議を5つ表示する
+          SizedBox(
+            height: deviceHeight * 0.15,
+            width: deviceWidth * 0.7,
+            child: Scrollbar(
+              child: ListView.builder(
+                  // shrinkWrap: true,
+                  // itemCount: meetings.length,
+                  itemCount: 5,
+                  itemBuilder: (c, i) {
+                    //データをとる時に最初の会議は削除する
+                    return SizedBox(
+                      height: deviceHeight * 0.09,
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            width: deviceWidth * 0.52,
-                            child: Text(
-                              'みんな仲良くなsssssssssろうよ',
-                              // style: TextStyle(fontWeight: FontWeight.bold),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: Text(
-                              '23-5-24',
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.blueGrey),
-                            ),
-                          ),
+                          MeetingCardWidget(
+                              deviceWidth: deviceWidth,
+                              meetingName: meetings[i]['会議名'],
+                              startDate: meetings[i]['開催日'],
+                              organizer: meetings[i]['開催者']),
                         ],
                       ),
-                      Text(
-                        '開催者',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      // Text('23-5-24'),
-                    ],
+                    );
+                  }),
+            ),
+          ),
+          TextButton(
+              onPressed: () {
+                // Navigator.push(
+                //     context,
+                //     CustomMaterialPageRoute(
+                //         builder: (context) => const SignUp()));
+              },
+              child: const Text('もっと見る'))
+        ],
+      ),
+    );
+  }
+}
+
+class MeetingCardWidget extends StatelessWidget {
+  const MeetingCardWidget(
+      {Key? key,
+      required this.deviceWidth,
+      required this.meetingName,
+      required this.startDate,
+      required this.organizer})
+      : super(key: key);
+
+  final double deviceWidth;
+  final String meetingName;
+  final String startDate;
+  final String organizer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      width: deviceWidth * 0.65,
+      // color: Colors.blueAccent,
+      decoration: BoxDecoration(
+          // 枠線
+          border:
+              Border.all(color: Color.fromARGB(130, 116, 192, 255), width: 2),
+          // 角丸
+          borderRadius: BorderRadius.circular(8),
+          color: Color.fromARGB(52, 116, 192, 255)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: deviceWidth * 0.4,
+                    child: Text(
+                      meetingName,
+                      // style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5),
+                    child: Text(
+                      startDate,
+                      style: TextStyle(fontSize: 12, color: Colors.blueGrey),
+                    ),
+                  ),
+                ],
               ),
+              Text(
+                organizer,
+                style: TextStyle(fontSize: 12),
+              ),
+              // Text('23-5-24'),
             ],
           ),
-          Text(
-            "過去に参加したミーティング",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          //ここで過去の会議を2つ表示する
-          Flexible(
-            child: ListView.builder(
-                itemCount: meetings.length,
-                itemBuilder: (c, i) {
-                  return Text(
-                    meetings[i]['開催日時'].toString(),
-                    textAlign: TextAlign.center,
-                  );
-                }),
-          )
         ],
       ),
     );

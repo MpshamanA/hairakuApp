@@ -43,25 +43,28 @@ class _AppState extends ConsumerState<App> {
           ? _pages[_selectIndex]
           : const SignIn(),
       bottomNavigationBar: ref.watch(userProvider).isSignin
-          ? NavigationBar(
-              destinations: [
-                NavigationDestination(
-                    icon: Icon(
-                      Icons.home,
-                      color: Color.fromARGB(255, 14, 102, 255),
-                    ),
-                    label: "ホーム"),
-                NavigationDestination(
-                    icon: Icon(
-                      Icons.qr_code_outlined,
-                      color: Color.fromARGB(255, 14, 102, 255),
-                    ),
-                    label: 'スキャン入場')
-              ],
-              selectedIndex: _selectIndex,
-              onDestinationSelected: _onTapItem,
-              backgroundColor: Color.fromARGB(255, 245, 245, 245),
-              animationDuration: const Duration(milliseconds: 500),
+          ? SizedBox(
+              height: 60,
+              child: NavigationBar(
+                destinations: [
+                  const NavigationDestination(
+                      icon: Icon(
+                        Icons.home,
+                        color: Color.fromARGB(255, 14, 102, 255),
+                      ),
+                      label: "ホーム"),
+                  const NavigationDestination(
+                      icon: Icon(
+                        Icons.qr_code_outlined,
+                        color: Color.fromARGB(255, 14, 102, 255),
+                      ),
+                      label: 'スキャン入場')
+                ],
+                selectedIndex: _selectIndex,
+                onDestinationSelected: _onTapItem,
+                backgroundColor: Colors.white,
+                animationDuration: const Duration(milliseconds: 500),
+              ),
             )
           // ? BottomNavigationBar(
           //     items: const [

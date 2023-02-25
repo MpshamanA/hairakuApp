@@ -43,21 +43,41 @@ class _AppState extends ConsumerState<App> {
           ? _pages[_selectIndex]
           : const SignIn(),
       bottomNavigationBar: ref.watch(userProvider).isSignin
-          ? BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ホーム'),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.qr_code_outlined),
-                  label: 'スキャン入場',
-                ),
-                // BottomNavigationBarItem(
-                //   icon: Icon(Icons.qr_code_outlined),
-                //   label: 'QRコードテスト',
-                // ),
+          ? NavigationBar(
+              destinations: [
+                NavigationDestination(
+                    icon: Icon(
+                      Icons.home,
+                      color: Color.fromARGB(255, 14, 102, 255),
+                    ),
+                    label: "ホーム"),
+                NavigationDestination(
+                    icon: Icon(
+                      Icons.qr_code_outlined,
+                      color: Color.fromARGB(255, 14, 102, 255),
+                    ),
+                    label: 'スキャン入場')
               ],
-              currentIndex: _selectIndex,
-              onTap: _onTapItem,
+              selectedIndex: _selectIndex,
+              onDestinationSelected: _onTapItem,
+              backgroundColor: Color.fromARGB(255, 245, 245, 245),
+              animationDuration: const Duration(milliseconds: 500),
             )
+          // ? BottomNavigationBar(
+          //     items: const [
+          //       BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ホーム'),
+          //       BottomNavigationBarItem(
+          //         icon: Icon(Icons.qr_code_outlined),
+          //         label: 'スキャン入場',
+          //       ),
+          //       // BottomNavigationBarItem(
+          //       //   icon: Icon(Icons.qr_code_outlined),
+          //       //   label: 'QRコードテスト',
+          //       // ),
+          //     ],
+          //     currentIndex: _selectIndex,
+          //     onTap: _onTapItem,
+          //   )
           : null,
     );
   }

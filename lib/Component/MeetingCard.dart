@@ -63,6 +63,7 @@ class MeetingCard extends StatelessWidget {
                     Text(
                       organizer,
                       style: TextStyle(fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     // Text('23-5-24'),
                   ],

@@ -64,29 +64,46 @@ class _HomeState extends ConsumerState<Home> {
             customer: ref.watch(userProvider),
             deviceSize: deviceSize,
           ),
-          // Text(
-          //   '参加した最新の集まり',
-          //   style: TextStyle(fontWeight: FontWeight.bold),
-          // ),
-          // //参加してる
-          // ref.watch(userProvider).isAdmission
-          //     ?
-          //     //データをとる時に最初の会議は削除する
-          //     MeetingCard(
-          //         deviceWidth: deviceWidth,
-          //         meetingName: meetings[0]['会議名'],
-          //         startDate: meetings[0]['開催日'],
-          //         organizer: meetings[0]['開催者'],
-          //       )
+          Text(
+            '参加した最新の集まり',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          // 全件取ってきて１件だけ表示しているが果たして最適か？
+          StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  //ローディング時の表示コンポーネント
+                  return Text('Loading...');
+                }
+                final data = snapshot.data!.data() as Map<String, dynamic>;
+                final meetings = data['meetingsObj'] as List<dynamic>;
+                //最後に追加された会議を最新とする
+                final revMeetings = List.from(meetings.reversed);
 
-          //     // : Text('入場ミーティングは無し')
-          //     // : Text('現在参加していません'),
-          //     : MeetingCard(
-          //         deviceWidth: deviceWidth,
-          //         meetingName: meetings[0]['会議名'],
-          //         startDate: meetings[0]['開催日'],
-          //         organizer: meetings[0]['開催者'],
-          //       ),
+                if (meetings.isEmpty) {
+                  return Text('会議はありません');
+                }
+                return SizedBox(
+                  height: deviceHeight * 0.09,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      MeetingCard(
+                          deviceWidth: deviceWidth,
+                          meetingName: revMeetings[0]['meetingName'],
+                          startDate: revMeetings[0]['startDate'],
+                          organizer: revMeetings[0]['organizer']),
+                    ],
+                  ),
+                );
+              }),
           //入場中の会議
           Text(
             "参加した過去の集まり",
@@ -108,16 +125,25 @@ class _HomeState extends ConsumerState<Home> {
                       return Text('Error: ${snapshot.error}');
                     } else if (snapshot.connectionState ==
                         ConnectionState.waiting) {
+                      //ローディング時の表示コンポーネント
                       return Text('Loading...');
                     }
                     final data = snapshot.data!.data() as Map<String, dynamic>;
                     final meetings = data['meetingsObj'] as List<dynamic>;
+                    //最後に追加された会議を最新とする
+                    final revMeetings = List.from(meetings.reversed);
 
+                    if (meetings.length <= 1) {
+                      return Text(
+                        '過去の会議はありません',
+                        textAlign: TextAlign.center,
+                      );
+                    }
                     return ListView.builder(
                         //firestoreから取得したデータは最大５件まで表示する
-                        itemCount: meetings.length >= 5 ? 5 : meetings.length,
+                        itemCount:
+                            meetings.length >= 6 ? 5 : meetings.length - 1,
                         itemBuilder: (_, i) {
-                          //データをとる時に最初の会議は削除する
                           return SizedBox(
                             height: deviceHeight * 0.09,
                             child: Column(
@@ -125,9 +151,10 @@ class _HomeState extends ConsumerState<Home> {
                               children: [
                                 MeetingCard(
                                     deviceWidth: deviceWidth,
-                                    meetingName: meetings[i]['meetingName'],
-                                    startDate: meetings[i]['startDate'],
-                                    organizer: meetings[i]['organizer']),
+                                    meetingName: revMeetings[i + 1]
+                                        ['meetingName'],
+                                    startDate: revMeetings[i + 1]['startDate'],
+                                    organizer: revMeetings[i + 1]['organizer']),
                               ],
                             ),
                           );
@@ -144,9 +171,9 @@ class _HomeState extends ConsumerState<Home> {
                     .update({
                   'meetingsObj': FieldValue.arrayUnion([
                     {
-                      'id': "iodhjfposdjfpds",
-                      'meetingName': 'アロハ会議',
-                      'organizer': 'アロハ会社',
+                      'id': 'jfkasjhgfkjsg',
+                      'meetingName': 'アロハ9会議',
+                      'organizer': 'アロハ9会社',
                       'startDate': DateFormat('yy-MM-dd').format(DateTime.now())
                     }
                   ])

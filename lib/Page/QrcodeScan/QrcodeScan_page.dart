@@ -133,7 +133,8 @@ class _QrcodeScanState extends ConsumerState<QrcodeScan> {
           context: context,
           builder: (BuildContext context) => AlertBuilderForCupertino(
                 titleMsg: 'こちらのミーティングに参加します。',
-                subMsg: '会議名:${meetingInfo.name} 開催者:${meetingInfo.owner}',
+                subMsg:
+                    '会議名:${meetingInfo.meetingName} 開催者:${meetingInfo.organizer}',
               )).then((_) {
         //OKを押されたら
         _addUserManage(meetingInfo);

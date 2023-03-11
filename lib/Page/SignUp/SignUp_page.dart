@@ -21,9 +21,12 @@ class SignUp extends ConsumerStatefulWidget {
 
 class _SignUpState extends ConsumerState<SignUp> {
   String _name = '';
-  // String _companyName = '';
   String _emailAdress = '';
   String _password = '';
+
+  bool _nameEnabled = true;
+  bool _emailAdressEnabled = true;
+  bool _passwordEnabled = true;
 
   SignUpModel model = SignUpModel();
 
@@ -59,6 +62,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextFormField(
+                    enabled: _nameEnabled,
                     decoration: InputDecoration(
                       label: Text('名前'),
                       border: OutlineInputBorder(
@@ -80,6 +84,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                   //   },
                   // ),
                   TextFormField(
+                    enabled: _emailAdressEnabled,
                     decoration: InputDecoration(
                       label: Text('メールアドレス'),
                       border: OutlineInputBorder(
@@ -100,6 +105,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                     },
                   ),
                   TextFormField(
+                    enabled: _passwordEnabled,
                     decoration: InputDecoration(
                       label: Text('パスワード'),
                       border: OutlineInputBorder(
@@ -126,13 +132,19 @@ class _SignUpState extends ConsumerState<SignUp> {
               ),
             ),
             ElevatedButton(
-              child: Text('登録'),
-              onPressed: _name == '' ||
-                      !EmailValidator.validate(_emailAdress) ||
-                      _password.length < 6
-                  ? null
-                  : callSignInToFirebase,
-            ),
+                child: Text('登録'),
+                onPressed: _name == '' ||
+                        !EmailValidator.validate(_emailAdress) ||
+                        _password.length < 6
+                    ? null
+                    : () {
+                        setState(() {
+                          _nameEnabled = false;
+                          _emailAdressEnabled = false;
+                          _passwordEnabled = false;
+                        });
+                        callSignInToFirebase();
+                      }),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

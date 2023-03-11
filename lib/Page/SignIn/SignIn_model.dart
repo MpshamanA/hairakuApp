@@ -3,15 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:user_manage_qrcode/Page/SignIn/SignIn_page.dart';
 import 'package:user_manage_qrcode/Providers/userInfo_provider.dart';
 
+import '../../Component/AlertBuilderForCupertino.dart';
 import '../../Custom/CustomMaterialPageRoute.dart';
 import '../../Model/Customer.dart';
 import '../../app.dart';
 
 class SignInModel {
-  Future<int> _fetchUserInfo(String uid, WidgetRef ref) async {
+  Future<void> _fetchUserInfo(String uid, WidgetRef ref) async {
     try {
       final userState = ref.watch(userProvider.notifier);
       //ログインしたユーザーのドキュメントを取得
@@ -26,10 +29,9 @@ class SignInModel {
           emailAddress: docSnapshot['emailAdress']);
       //ログイン情報を更新
       userState.state.isSignin = true;
-      return 0;
     } catch (e) {
       print('ログインユーザーの情報取得に失敗しました');
-      return -1;
+      EasyLoading.dismiss();
     }
   }
 
@@ -37,20 +39,32 @@ class SignInModel {
       BuildContext context, WidgetRef ref) async {
     await Firebase.initializeApp();
     try {
+      //ローディング開始
+      EasyLoading.show(status: 'loading...');
       final FirebaseAuth auth = FirebaseAuth.instance;
-      final credential = await auth
+      await auth
           .signInWithEmailAndPassword(email: emailAddress, password: password)
-          .then((value) {
-        //uid取得
-        // uid = auth.currentUser!.uid.toString();
-        final returnCode = _fetchUserInfo(value.user!.uid, ref);
-        if (returnCode == -1) return;
-
+          .then((value) async {
+        //ログインしたユーザーの情報をプロバイダーに登録
+        await _fetchUserInfo(value.user!.uid, ref);
         //ユーザーの登録に成功したら画面遷移
         Navigator.push(context,
             CustomMaterialPageRoute(builder: (context) => const App()));
+        EasyLoading.dismiss();
       });
     } on FirebaseAuthException catch (e) {
+      EasyLoading.dismiss();
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertBuilderForCupertino(
+                titleMsg: 'ログインに失敗しました。',
+                subMsg: 'メールアドレスまたはパスワードが違います。',
+              )).then((_) {
+        //OKを押されたら
+        Navigator.push(context,
+            CustomMaterialPageRoute(builder: (context) => const SignIn()));
+      });
+      //デバック用
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
         return;

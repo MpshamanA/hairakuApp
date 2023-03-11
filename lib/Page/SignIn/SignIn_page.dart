@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:email_validator/email_validator.dart';
 
 import 'package:flutter/material.dart';
@@ -27,16 +29,16 @@ class SignIn extends ConsumerStatefulWidget {
 }
 
 class _SignInState extends ConsumerState<SignIn> {
-  SignInModel model = SignInModel();
+  SignInModel _model = SignInModel();
   // 認証用
-  String emailAddress = '';
-  String password = '';
+  String _emailAddress = '';
+  String _password = '';
 
-  bool watchEmailAddress = false;
-  bool watchPassword = false;
+  bool _emailAddressEnabled = true;
+  bool _passwordEnabled = true;
 
   void callSignInToFirebase() {
-    model.signInToFirebase(emailAddress, password, context, ref);
+    _model.signInToFirebase(_emailAddress, _password, context, ref);
   }
 
   @override
@@ -66,6 +68,7 @@ class _SignInState extends ConsumerState<SignIn> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextFormField(
+                      enabled: _emailAddressEnabled,
                       decoration: InputDecoration(
                         label: Text('メールアドレス'),
                         border: OutlineInputBorder(
@@ -80,9 +83,10 @@ class _SignInState extends ConsumerState<SignIn> {
                         return null;
                       },
                       onChanged: (value) => setState(() {
-                            emailAddress = value;
+                            _emailAddress = value;
                           })),
                   TextFormField(
+                    enabled: _passwordEnabled,
                     decoration: InputDecoration(
                         label: Text('パスワード'),
                         border: OutlineInputBorder(
@@ -98,7 +102,7 @@ class _SignInState extends ConsumerState<SignIn> {
                       return null;
                     },
                     onChanged: (value) => setState(() {
-                      password = value;
+                      _password = value;
                     }),
                   ),
                 ],
@@ -111,10 +115,16 @@ class _SignInState extends ConsumerState<SignIn> {
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                      onPressed: !EmailValidator.validate(emailAddress) ||
-                              password.length < 6
+                      onPressed: !EmailValidator.validate(_emailAddress) ||
+                              _password.length < 6
                           ? null
-                          : callSignInToFirebase,
+                          : () {
+                              setState(() {
+                                _emailAddressEnabled = false;
+                                _passwordEnabled = false;
+                              });
+                              callSignInToFirebase();
+                            },
                       child: const Text('ログイン')),
                   Row(
                     mainAxisSize: MainAxisSize.min,

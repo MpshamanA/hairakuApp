@@ -59,8 +59,10 @@ class _QrcodeScanState extends ConsumerState<QrcodeScan> {
   }
 
   Meeting _getMeetingInfo(String readQrcodeDate) {
+    //code interface : format is csv
+    //id,name,organizer,startDate
     List<String> code = _decode(readQrcodeDate);
-    Meeting meetingInfo = Meeting(code[0], code[1], code[2], DateTime.now());
+    Meeting meetingInfo = Meeting(code[0], code[1], code[2], code[3]);
     return meetingInfo;
   }
 
@@ -98,20 +100,18 @@ class _QrcodeScanState extends ConsumerState<QrcodeScan> {
 
   Future<void> _addUserManage(Meeting meetingInfo) async {
     await Firebase.initializeApp();
-    //QRCodeのミーティングに入場したことを登録する
-    DocumentReference<Map<String, dynamic>> userManageCollection =
-        FirebaseFirestore.instance.collection('userManages').doc();
+    //入場したミーティングをusersコレクションに登録する
+    String uid = ref.watch(userProvider).uid;
     try {
-      String uid = ref.watch(userProvider).uid;
-      userManageCollection.set({
-        'admissionTime': DateTime.now(),
-        'meetingId': meetingInfo.id,
-        'userId': uid,
-      }).then((_) {
-        //登録に成功したら状態管理ステートに登録する
-        // ref.watch(userProvider.notifier).state.isAdmission = true;
-        final userManage = ref.watch(userManageProvider.notifier);
-        userManage.state = UserManage.init(meetingInfo.id, uid);
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'meetingsObj': FieldValue.arrayUnion([
+          {
+            'id': meetingInfo.id,
+            'meetingName': meetingInfo.name,
+            'organizer': meetingInfo.organizer,
+            'startDate': meetingInfo.startDate
+          }
+        ])
       });
     } catch (e) {
       print('ユーザー管理情報の登録に失敗しました。');
@@ -133,8 +133,7 @@ class _QrcodeScanState extends ConsumerState<QrcodeScan> {
           context: context,
           builder: (BuildContext context) => AlertBuilderForCupertino(
                 titleMsg: 'こちらのミーティングに参加します。',
-                subMsg:
-                    '会議名:${meetingInfo.meetingName} 開催者:${meetingInfo.organizer}',
+                subMsg: '会議名:${meetingInfo.name} 開催者:${meetingInfo.organizer}',
               )).then((_) {
         //OKを押されたら
         _addUserManage(meetingInfo);

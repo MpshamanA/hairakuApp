@@ -83,13 +83,14 @@ class _HomeState extends ConsumerState<Home> {
                   return Text('Loading...');
                 }
                 final data = snapshot.data!.data() as Map<String, dynamic>;
+
+                if (data['meetingsObj'] == null) {
+                  return Text('会議はありません');
+                }
                 final meetings = data['meetingsObj'] as List<dynamic>;
                 //最後に追加された会議を最新とする
                 final revMeetings = List.from(meetings.reversed);
 
-                if (meetings.isEmpty) {
-                  return Text('会議はありません');
-                }
                 return SizedBox(
                   height: deviceHeight * 0.09,
                   child: Column(
@@ -129,6 +130,13 @@ class _HomeState extends ConsumerState<Home> {
                       return Text('Loading...');
                     }
                     final data = snapshot.data!.data() as Map<String, dynamic>;
+
+                    if (data['meetingsObj'] == null) {
+                      return Text(
+                        '会議はありません',
+                        textAlign: TextAlign.center,
+                      );
+                    }
                     final meetings = data['meetingsObj'] as List<dynamic>;
                     //最後に追加された会議を最新とする
                     final revMeetings = List.from(meetings.reversed);
@@ -171,9 +179,9 @@ class _HomeState extends ConsumerState<Home> {
                     .update({
                   'meetingsObj': FieldValue.arrayUnion([
                     {
-                      'id': 'jfkasjhgfkjsg',
-                      'meetingName': 'アロハ9会議',
-                      'organizer': 'アロハ9会社',
+                      'id': 'dfddfsdfdssagdfgdf',
+                      'meetingName': 'アロハ12dsasdasdsadsa会議',
+                      'organizer': 'アロハa12sadadazxsdasdasd会社',
                       'startDate': DateFormat('yy-MM-dd').format(DateTime.now())
                     }
                   ])

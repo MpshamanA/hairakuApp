@@ -1,7 +1,7 @@
 class Meeting {
   String id;
-  String meetingName;
+  String name;
   String organizer;
-  DateTime startDate;
-  Meeting(this.id, this.meetingName, this.organizer, this.startDate);
+  String startDate;
+  Meeting(this.id, this.name, this.organizer, this.startDate);
 }

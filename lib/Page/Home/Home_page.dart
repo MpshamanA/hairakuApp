@@ -1,20 +1,16 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_manage_qrcode/Page/AccountSetting/AccountSetting_page.dart';
+import 'package:user_manage_qrcode/Component/LogoutBuilderForCupertino.dart';
+import 'package:user_manage_qrcode/Page/SeeMore/SeeMore_page.dart';
 
-// import '../../Component/AlertBuilderForCupertino.dart';
 import '../../Const//ConstColors.dart';
 import '../../Custom/CustomMaterialPageRoute.dart';
 import '../../Component/UserCard.dart';
 import '../../Component/MeetingCard.dart';
 import '../../Providers/userInfo_provider.dart';
-// import '../../Providers/userManage_provider.dart';
 
 import 'package:intl/intl.dart';
-
 import 'dart:convert';
 
 class Home extends ConsumerStatefulWidget {
@@ -38,15 +34,23 @@ class _HomeState extends ConsumerState<Home> {
       backgroundColor: ConstColors.bodyColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.account_circle),
+          icon: const Icon(Icons.logout),
           iconSize: 30,
           color: ConstColors.mainColor,
-          onPressed: () {
+          onPressed: () async {
             //appbarのaccount_circleアイコンをタップしたときの処理
-            Navigator.push(
-                context,
-                CustomMaterialPageRoute(
-                    builder: (context) => const AccountSetting()));
+            // Navigator.push(
+            //     context,
+            //     CustomMaterialPageRoute(
+            //         builder: (context) => const AccountSetting()));
+            await showDialog(
+                context: context,
+                builder: (BuildContext context) => LogoutBuilderForCupertino(
+                      titleMsg: 'ログアウト',
+                      subMsg: 'ログアウトしてよろしいでしょうか？',
+                      ref: ref,
+                      userProvider: userProvider,
+                    ));
           },
         ),
         centerTitle: true,
@@ -170,28 +174,28 @@ class _HomeState extends ConsumerState<Home> {
                   }),
             ),
           ),
+          // TextButton(
+          //     onPressed: () async {
+          //       //テストで会議を追加してるがこれはQRコードを読み込んだときに実装する
+          //       await FirebaseFirestore.instance
+          //           .collection('users')
+          //           .doc(uid)
+          //           .update({
+          //         'meetingsObj': FieldValue.arrayUnion([
+          //           {
+          //             'id': 'dfddfsdfdssagdfgdf',
+          //             'meetingName': 'アロハ12dsasdasdsadsa会議',
+          //             'organizer': 'アロハa12sadadazxsdasdasd会社',
+          //             'startDate': DateFormat('yy-MM-dd').format(DateTime.now())
+          //           }
+          //         ])
+          //       });
+          //     },
+          //     child: const Text('meetingadd')),
           TextButton(
-              onPressed: () async {
-                //テストで会議を追加してるがこれはQRコードを読み込んだときに実装する
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(uid)
-                    .update({
-                  'meetingsObj': FieldValue.arrayUnion([
-                    {
-                      'id': 'dfddfsdfdssagdfgdf',
-                      'meetingName': 'アロハ12dsasdasdsadsa会議',
-                      'organizer': 'アロハa12sadadazxsdasdasd会社',
-                      'startDate': DateFormat('yy-MM-dd').format(DateTime.now())
-                    }
-                  ])
-                });
-
-                // await getMeetingsObj();
-                // Navigator.push(
-                //     context,
-                //     CustomMaterialPageRoute(
-                //         builder: (context) => const SignUp()));
+              onPressed: () {
+                Navigator.push(context,
+                    CustomMaterialPageRoute(builder: (context) => SeeMore()));
               },
               child: const Text('もっと見る'))
         ],

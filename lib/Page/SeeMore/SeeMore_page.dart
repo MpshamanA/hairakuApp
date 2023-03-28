@@ -29,7 +29,7 @@ class _SeeMoreState extends ConsumerState<SeeMore> {
       backgroundColor: ConstColors.bodyColor,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('参加したミーティング一覧'),
+        title: const Text('参加した集まり一覧'),
         backgroundColor: ConstColors.appbarColor,
         foregroundColor: ConstColors.mainColor,
         //影

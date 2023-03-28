@@ -57,7 +57,7 @@ class _SignInState extends ConsumerState<SignIn> {
               padding: const EdgeInsets.only(bottom: 26),
               child: Image.asset(
                 'assets/images/flutter-logo.png',
-                width: deviceWidth * 0.2,
+                width: deviceWidth * 0.15,
                 fit: BoxFit.fill,
               ),
             ),

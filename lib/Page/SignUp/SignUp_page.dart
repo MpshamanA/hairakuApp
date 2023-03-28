@@ -40,123 +40,134 @@ class _SignUpState extends ConsumerState<SignUp> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     //画面の縦幅を取得
     final double deviceHeight = MediaQuery.of(context).size.height;
+    //メイン要素の縦幅を指定
+    final double mainHeight = deviceHeight * 0.67;
+    //テキストフィールドboxの縦幅指定
+    final double textFieldboxHeight = mainHeight * 0.5;
+    //テキストフィールドの縦幅指定
+    final double textFieldHeight = textFieldboxHeight * 0.02;
+
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Center(
-        child: Column(
-          //Columnはデフォルトでは画面全体に広がるのでそのままではセンターに表示されない
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 26),
-              child: Image.asset(
-                'assets/images/flutter-logo.png',
-                width: deviceWidth * 0.2,
-                fit: BoxFit.fill,
+        child: SizedBox(
+          height: mainHeight,
+          child: Column(
+            //Columnはデフォルトでは画面全体に広がるのでそのままではセンターに表示されない
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Image.asset(
+                  'assets/images/flutter-logo.png',
+                  width: deviceWidth * 0.15,
+                  fit: BoxFit.fill,
+                ),
               ),
-            ),
-            SizedBox(
-              height: deviceHeight * 0.4,
-              width: deviceWidth * 0.8,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextFormField(
-                    enabled: _nameEnabled,
-                    decoration: InputDecoration(
-                      label: Text('名前'),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _name = value;
-                      });
-                    },
-                  ),
-                  // TextFormField(
-                  //   decoration: InputDecoration(
-                  //       label: Text('会社名'), border: OutlineInputBorder()),
-                  //   onChanged: (value) {
-                  //     setState(() {
-                  //       _companyName = value;
-                  //     });
-                  //   },
-                  // ),
-                  TextFormField(
-                    enabled: _emailAdressEnabled,
-                    decoration: InputDecoration(
-                      label: Text('メールアドレス'),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                    // keyboardType: TextInputType.emailAddress,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == '' || !EmailValidator.validate(value!)) {
-                        return 'メールアドレスが不正です';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        _emailAdress = value;
-                      });
-                    },
-                  ),
-                  TextFormField(
-                    enabled: _passwordEnabled,
-                    decoration: InputDecoration(
-                      label: Text('パスワード'),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
+              SizedBox(
+                height: textFieldboxHeight,
+                width: deviceWidth * 0.8,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextFormField(
+                      enabled: _nameEnabled,
+                      style: TextStyle(fontSize: textFieldHeight * 2.5),
+                      decoration: InputDecoration(
+                        label: Text('名前'),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: textFieldHeight, horizontal: 10),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
                       ),
-                    ),
-                    obscureText: true,
-                    maxLength: 20,
-                    //バリデーション
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value!.length < 6) {
-                        return '6〜20桁でパスワードを作成してください。';
-                      }
-                      return null;
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        _password = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            ElevatedButton(
-                child: Text('登録'),
-                onPressed: _name == '' ||
-                        !EmailValidator.validate(_emailAdress) ||
-                        _password.length < 6
-                    ? null
-                    : () {
+                      onChanged: (value) {
                         setState(() {
-                          _nameEnabled = false;
-                          _emailAdressEnabled = false;
-                          _passwordEnabled = false;
+                          _name = value;
                         });
-                        callSignInToFirebase();
-                      }),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('アカウントをお持ちの方は'),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('こちら'))
-              ],
-            )
-          ],
+                      },
+                    ),
+                    TextFormField(
+                      enabled: _emailAdressEnabled,
+                      style: TextStyle(fontSize: textFieldHeight * 2.5),
+                      decoration: InputDecoration(
+                        label: Text('メールアドレス'),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: textFieldHeight, horizontal: 10),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                      // keyboardType: TextInputType.emailAddress,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == '' || !EmailValidator.validate(value!)) {
+                          return 'メールアドレスが不正です';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          _emailAdress = value;
+                        });
+                      },
+                    ),
+                    TextFormField(
+                      enabled: _passwordEnabled,
+                      style: TextStyle(fontSize: textFieldHeight * 2.5),
+                      decoration: InputDecoration(
+                        label: Text('パスワード'),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: textFieldHeight, horizontal: 10),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      obscureText: true,
+                      maxLength: 20,
+                      //バリデーション
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value!.length < 6) {
+                          return '6〜20桁でパスワードを作成してください。';
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          _password = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                  child: Text('登録'),
+                  onPressed: _name == '' ||
+                          !EmailValidator.validate(_emailAdress) ||
+                          _password.length < 6
+                      ? null
+                      : () {
+                          setState(() {
+                            _nameEnabled = false;
+                            _emailAdressEnabled = false;
+                            _passwordEnabled = false;
+                          });
+                          callSignInToFirebase();
+                        }),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('アカウントをお持ちの方は'),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('こちら'))
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
